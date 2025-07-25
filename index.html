@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Will You Be My Girlfriend?</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom right, #ffe0ec, #c0f5fa);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .card {
+      background-color: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      animation: fadeIn 1.5s ease-in-out;
+      z-index: 1;
+      position: relative;
+    }
+
+    .image-container img {
+      width: 100%;
+      border-radius: 16px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    .emoji {
+      font-size: 50px;
+      margin-bottom: 15px;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+    }
+
+    .yes {
+      background-color: #ff4e7a;
+      color: white;
+      animation: bounce 1s infinite alternate;
+    }
+
+    .no {
+      background-color: #e0e0e0;
+      color: #333;
+    }
+
+    .yes:hover {
+      background-color: #ff2e5f;
+    }
+
+    .no:hover {
+      background-color: #cccccc;
+    }
+
+    .response {
+      margin-top: 25px;
+      font-size: 18px;
+      color: #444;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-8px); }
+    }
+
+    .heart {
+      position: absolute;
+      top: -50px;
+      font-size: 24px;
+      animation: fall linear infinite;
+      color: #ff4e7a;
+      opacity: 0.8;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-100px) rotate(0deg); }
+      100% { transform: translateY(110vh) rotate(360deg); }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Music -->
+  <audio autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_e9b7944e87.mp3?filename=romantic-love-13202.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="card">
+    <div class="image-container">
+      <img src="/images/IMG_8766-removebg-preview.png" alt="You two together" />
+    </div>
+
+    <div class="emoji">🥺❤️</div>
+    <h1>Will you be my girlfriend?</h1>
+
+    <div class="buttons">
+      <button class="yes" onclick="respondYes()">Yes 💖</button>
+      <button class="no" id="noBtn">No 😢</button>
+    </div>
+
+    <div class="response" id="responseText"></div>
+  </div>
+
+  <script>
+    function respondYes() {
+      document.getElementById("responseText").innerText = "Yaaay! 💕 You just made my heart explode with joy!";
+      startConfetti();
+    }
+
+    // Make the "No" button run away
+    const noBtn = document.getElementById('noBtn');
+    noBtn.addEventListener('mouseover', moveButton);
+    noBtn.addEventListener('click', moveButton);
+    noBtn.addEventListener('touchstart', moveButton);
+
+    function moveButton() {
+      const x = Math.floor(Math.random() * (window.innerWidth - 100));
+      const y = Math.floor(Math.random() * (window.innerHeight - 100));
+      noBtn.style.position = "absolute";
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    }
+
+    // Falling hearts
+    const emojis = ["❤️", "💖", "💘", "💕"];
+    for (let i = 0; i < 20; i++) {
+      let heart = document.createElement("div");
+      heart.className = "heart";
+      heart.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.animationDuration = (4 + Math.random() * 3) + "s";
+      heart.style.fontSize = (20 + Math.random() * 15) + "px";
+      document.body.appendChild(heart);
+    }
+
+    // Confetti explosion
+    function startConfetti() {
+      const canvas = document.getElementById("confetti-canvas");
+      const ctx = canvas.getContext("2d");
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let particles = [];
+
+      for (let i = 0; i < 150; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          speed: Math.random() * 3 + 2,
+          size: Math.random() * 8 + 4,
+          color: `hsl(${Math.random() * 360}, 100%, 60%)`,
+          rotation: Math.random() * 360
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let p of particles) {
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rotation);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+
+          p.y += p.speed;
+          p.rotation += 0.02;
+        }
+
+        requestAnimationFrame(draw);
+      }
+
+      draw();
+      setTimeout(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }, 5000);
+    }
+  </script>
+
+</body>
+</html>
